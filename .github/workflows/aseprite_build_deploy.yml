@@ -73,7 +73,6 @@ jobs:
       - name: Install Visual Studio Community 2022
         run: |
             choco install visualstudio2022community --params "--includeOptional --includeRecommended"
-            vs_buildtools.exe --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows10SDK.19041
         shell: cmd
       - name: (Ubuntu) Install dependencies
         if: matrix.os == 'ubuntu-latest'
