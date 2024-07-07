@@ -81,10 +81,10 @@ jobs:
         shell: cmd
       - name: (Ubuntu) Install dependencies
         if: matrix.os == 'ubuntu-latest'
-        run: sudo apt install -y cmake ninja-build libxcursor-dev libxi-dev libgl1-mesa-dev
-      - name: Set Curl Path
+        run: sudo apt install -y cmake ninja-build libxcursor-dev libxi-dev libgl1-mesa-dev   
+      - name: Add curl to PATH
         run: |
-          echo "PATH=%PATH%;C:\ProgramData\chocolatey\lib\curl\tools\curl\bin" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "C:\ProgramData\Chocolatey\lib\curl\tools\curl\bin" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: (macOS) Install dependencies
         if: matrix.os == 'macOS-latest'
         run: brew install ninja p7zip
