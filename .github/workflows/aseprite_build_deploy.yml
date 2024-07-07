@@ -82,10 +82,9 @@ jobs:
       - name: (Ubuntu) Install dependencies
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt install -y cmake ninja-build libxcursor-dev libxi-dev libgl1-mesa-dev
-      - name: Set up Visual Studio tools
+      - name: Set Curl Path
         run: |
-          echo "Adding Visual Studio tools to PATH"
-          echo "PATH=%PATH%;C:\Program Files (x86)\Microsoft Visual Studio\2022\Community\Common7\Tools\" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "PATH=%PATH%;C:\ProgramData\chocolatey\lib\curl\tools\curl\bin" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: (macOS) Install dependencies
         if: matrix.os == 'macOS-latest'
         run: brew install ninja p7zip
