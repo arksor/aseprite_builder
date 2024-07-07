@@ -69,7 +69,7 @@ jobs:
     steps:
       - name: (Windows) Install dependencies
         if: matrix.os == 'windows-latest'
-        uses: seanmiddleditch/gha-setup-ninja@master
+        uses: seanmiddleditch/gha-setup-ninja@v1
       - name: Install Curl
         if: matrix.os == 'windows-latest'
         run: |
