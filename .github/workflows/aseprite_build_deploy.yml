@@ -101,6 +101,10 @@ jobs:
           curl -o Aseprite-source.zip -L ${{ needs.check-version.outputs.download_url }}
           unzip Aseprite-source.zip -d aseprite
           mkdir -p aseprite/build
+      - name: Fix -o-sign-compare
+        run: |
+            (Get-Content CMakeLists.txt) | ForEach-Object { $_ -replace 'add_definitions(-Wno-sign-compare)', '' } | Set-Content CMakeLists.txt
+        working-directory: aseprite/src
       - name: Fix Aseprite third party build bash
         run: |
           gci -fo
