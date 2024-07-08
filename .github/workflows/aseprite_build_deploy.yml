@@ -103,13 +103,15 @@ jobs:
           mkdir -p aseprite/build
       - name: Fix -o-sign-compare
         run: |
-          (Get-Content CMakeLists.txt) | ForEach-Object { $_ -replace 'add_definitions(-Wno-sign-compare)', '' } | Set-Content CMakeLists.txt
+          gci -fo
+          (Get-Content CMakeLists.txt) | ForEach-Object { $_ -replace '-Wno-sign-compare', '' } | Set-Content CMakeLists.txt
           Get-Content CMakeLists.txt
         working-directory: aseprite/src
       - name: Fix Aseprite third party build bash
         run: |
           gci -fo
           (Get-Content CMakeLists.txt) | ForEach-Object { $_ -replace '-fPIC', '' } | Set-Content CMakeLists.txt
+          Get-Content CMakeLists.txt
         working-directory: aseprite/third_party/json11
       - name: Install Visual Studio Community 2022
         run: |
