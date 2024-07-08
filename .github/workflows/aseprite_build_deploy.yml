@@ -103,7 +103,7 @@ jobs:
           mkdir -p aseprite/build
       - name: Fix Aseprite third party build bash
         run: |
-          ls -la
+          gci -fo
           (Get-Content CMakeLists.txt) | ForEach-Object { $_ -replace '-fPIC', '' } | Set-Content CMakeLists.txt
         working-directory: aseprite/third_party/json11
       - name: Install Visual Studio Community 2022
