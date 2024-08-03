@@ -62,29 +62,37 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
        matrix:
-         os: [windows-latest]
+         #os: [windows-latest]
+         os: [mac-intel]
        fail-fast: false    
     steps:
       - name: (Windows) Install dependencies
         if: matrix.os == 'windows-latest'
         uses: seanmiddleditch/gha-setup-ninja@v1
-      - name: Install Curl
+      - name: (Windows) Install Curl
         if: matrix.os == 'windows-latest'
         run: |
           choco install curl
         shell: cmd
-      - name: Add curl to PATH
+      - name: (Windows) Add curl to PATH
+        if: matrix.os == 'windows-latest'
         run: |
           setx PATH "%PATH%;C:\ProgramData\Chocolatey\lib\curl\tools\curl\bin"
         shell: cmd
-      - name: Install ninja
+      - name: (Windows) Install ninja
+        if: matrix.os == 'windows-latest'
         run: |
           choco install ninja
         shell: cmd
-      - name: Add ninja to PATH
+      - name: (Windows) Add ninja to PATH
+        if: matrix.os == 'windows-latest'
         run: |
           setx PATH "%PATH%;C:\ProgramData\Chocolatey\lib\ninja\tools\ninja\bin"
         shell: cmd
+      
+      - name: (mac-intel) Install dependencies
+        if: matrix.os == 'mac-intel' || matrix.os == 'mac-silicon'
+        run: brew install ninja p7zip
       - name: Get Skia from cache
         id: skia-cache
         uses: actions/cache@v2
@@ -101,19 +109,22 @@ jobs:
           curl -o Aseprite-source.zip -L ${{ needs.check-version.outputs.download_url }}
           unzip Aseprite-source.zip -d aseprite
           mkdir -p aseprite/build
-      - name: Fix -o-sign-compare
+      - name: (Windows) Fix -o-sign-compare
+        if: matrix.os == 'windows-latest'
         run: |
           gci -fo
           (Get-Content CMakeLists.txt) | ForEach-Object { $_ -replace '-Wno-sign-compare', '' } | Set-Content CMakeLists.txt
           Get-Content CMakeLists.txt
         working-directory: aseprite/src
-      - name: Fix Aseprite third party build bash
+      - name: (Windows) Fix Aseprite third party build bash
+        if: matrix.os == 'windows-latest'
         run: |
           gci -fo
           (Get-Content CMakeLists.txt) | ForEach-Object { $_ -replace '-fPIC', '' } | Set-Content CMakeLists.txt
           Get-Content CMakeLists.txt
         working-directory: aseprite/third_party/json11
-      - name: Install Visual Studio Community 2022
+      - name: (Windows) Install Visual Studio Community 2022
+        if: matrix.os == 'windows-latest'
         run: |
           choco install visualstudio2022community --params "--includeOptional --includeRecommended"
         shell: cmd
@@ -129,6 +140,10 @@ jobs:
         working-directory: aseprite/build
         shell: cmd
         run: cmake -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_IGNORE_PATH='C:/ProgramData/chocolatey/bin/;C:/Strawberry/c/bin/' -DLAF_BACKEND=skia -DSKIA_DIR=../../skia -DSKIA_LIBRARY_DIR=../../skia/out/Release-x64 -G Ninja ..
+      - name: (mac-intel) Run CMake
+        if: matrix.os == 'mac-intel'
+        working-directory: aseprite/build
+        run: cmake -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_OSX_ARCHITECTURES=x86_64 -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9 -DCMAKE_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk -DLAF_BACKEND=skia -DSKIA_DIR=../../skia -DSKIA_LIBRARY_DIR=../../skia/out/Release-x64 -G Ninja ..      
       - name: Run Ninja
         working-directory: aseprite/build
         run: ninja aseprite
